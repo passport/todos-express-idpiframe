@@ -18,11 +18,11 @@ window.addEventListener('load', function() {
     // FIXME: without nonce here, this has a bad error message from the server
     
     var url = 'http://localhost:8085/oauth2/authorize?' + stringifyQuery({
-      response_type: 'id_token',
+      response_type: 'permission',
       client_id: clientID,
-      xresponse_mode: 'web_message',
       redirect_uri: window.location.origin + '/oauth2/redirect',
-      nonce: 'TODO'
+      scope: 'profile', // required by google
+      //nonce: 'TODO' // disallowed by google?
     });
     
     
