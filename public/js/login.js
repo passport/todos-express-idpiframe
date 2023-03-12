@@ -15,8 +15,14 @@ function randomString(length) {
   return result;
 }
 
+function sendMessage() {
+  
+}
+
 
 window.addEventListener('load', function() {
+  var rpcToken = randomString(16);
+  
   
   document.getElementById('login').addEventListener('click', function(event) {
     event.preventDefault();
@@ -38,9 +44,31 @@ window.addEventListener('load', function() {
     window.open(url, '_login', 'top=' + (screen.height / 2 - 275) + ',left=' + (screen.width / 2 - 250) + ',width=500,height=550');
   });
   
+  // 
   window.addEventListener('message', function(event) {
     console.log('GOT MESSAGE!');
     console.log(event);
+    
+    var data = JSON.parse(event.data);
+    console.log(data);
+    
+    if (data.rpcToken !== rpcToken) { return; }
+    
+    if (data.method == 'fireIdpEvent') {
+      switch (data.params.type) {
+      case 'idpReady':
+        console.log('IDP READY');
+      }
+    }
+    
+    
+    /*
+    switch (data.method) {
+    case 'fireIdpEvent':
+    }
+    */
+    
+    
     return;
     
     // TODO: make a strategy to POST id_token to backend
@@ -65,7 +93,8 @@ window.addEventListener('load', function() {
   
   var url = 'http://localhost:8085/oauth2/iframe#' + stringifyQuery({
     origin: window.location.origin,
-    rpcToken: randomString(8)
+    rpcToken: rpcToken,
+    clearCache: 0
   });
   console.log('url: ' + url);
   
