@@ -7,6 +7,15 @@ function stringifyQuery(queryObj) {
   return query;
 }
 
+function randomString(length) {
+  var CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_';
+
+  var result = '';
+  for (var i = length; i > 0; --i) { result += CHARS[Math.floor(Math.random() * CHARS.length)]; }
+  return result;
+}
+
+
 window.addEventListener('load', function() {
   
   document.getElementById('login').addEventListener('click', function(event) {
@@ -20,11 +29,11 @@ window.addEventListener('load', function() {
     var url = 'http://localhost:8085/oauth2/authorize?' + stringifyQuery({
       response_type: 'permission',
       client_id: clientID,
-      redirect_uri: window.location.origin + '/oauth2/redirect',
+      //redirect_uri: window.location.origin + '/oauth2/redirect',
+      redirect_uri: 'storagerelay://http/localhost:3001?id=auth729645',
       scope: 'profile', // required by google
       //nonce: 'TODO' // disallowed by google?
     });
-    
     
     window.open(url, '_login', 'top=' + (screen.height / 2 - 275) + ',left=' + (screen.width / 2 - 250) + ',width=500,height=550');
   });
@@ -50,5 +59,24 @@ window.addEventListener('load', function() {
     };
     xhr.send();
   });
+  
+  
+  console.log('embedding iframe...');
+  
+  var url = 'http://localhost:8085/oauth2/iframe#' + stringifyQuery({
+    origin: window.location.origin,
+    rpcToken: randomString(8)
+  });
+  console.log('url: ' + url);
+  
+  
+  var iframe = document.createElement('iframe');
+  //iframe.style.display = "none";
+  iframe.id = 'idp';
+  //iframe.src = 'https://accounts.google.com/o/oauth2/iframe#origin=http%3A%2F%2Flocalhost%3A3001&rpcToken=897783583.9057864&clearCache=1';
+  iframe.sandbox = 'allow-scripts allow-same-origin'
+  //iframe.src = 'http://localhost:8085/oauth2/iframe#origin=http://localhost:3001&rpcToken=897783583.9057864';
+  iframe.src = url;
+  document.body.appendChild(iframe);
   
 });
