@@ -15,13 +15,23 @@ function randomString(length) {
   return result;
 }
 
-function sendMessage() {
+var callbacks = {};
+
+function sendMessage(message, cb) {
+  console.log('sending...');
+  console.log(message);
   
+  var id = randomString(8);
+  message.id = id;
+  callbacks[id] = cb;
+  
+  window['idp'].contentWindow.postMessage(JSON.stringify(message), 'http://localhost:8085'); // FIXME: DRY-up the origin
 }
 
 
 window.addEventListener('load', function() {
   var rpcToken = randomString(16);
+  var clientID = document.querySelector('meta[name="client-id"]').getAttribute('content');
   
   
   document.getElementById('login').addEventListener('click', function(event) {
@@ -54,10 +64,31 @@ window.addEventListener('load', function() {
     
     if (data.rpcToken !== rpcToken) { return; }
     
-    if (data.method == 'fireIdpEvent') {
+    if (data.id) {
+      var cb = callbacks[data.id];
+      if (cb) {
+        console.log('HAVE A CALLBACK!');
+        cb(null, data.result);
+        delete callbacks[data.id];
+      }
+      
+    } else if (data.method == 'fireIdpEvent') {
       switch (data.params.type) {
       case 'idpReady':
         console.log('IDP READY');
+        
+        sendMessage({
+          method: 'monitorClient',
+          params: {
+            clientId: clientID
+          },
+          rpcToken: rpcToken
+        }, function() {
+          console.log('MONITORING!!!!');
+        });
+        
+        break;
+        
       }
     }
     
