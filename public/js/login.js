@@ -89,7 +89,17 @@ window.addEventListener('load', function() {
           console.log('MONITORING!!!!');
           console.log(result);
           
+          var params = {
+            crossSubDomains: true,
+            domain: window.location.origin
+          }
           
+          sendMessage('getSessionSelector', params, function(err, result) {
+            console.log('GOT SESSION SELECTOR');
+            console.log(err);
+            console.log(result);
+            
+          });
           
         });
         
