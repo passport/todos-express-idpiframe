@@ -70,13 +70,11 @@ window.addEventListener('load', function() {
   console.log('url: ' + url);
   
   
+  // Embed IDP IFrame into container page.
   var iframe = document.createElement('iframe');
   //iframe.style.display = "none";
   iframe.id = 'idp';
-  //iframe.src = 'https://accounts.google.com/o/oauth2/iframe#origin=http%3A%2F%2Flocalhost%3A3001&rpcToken=897783583.9057864&clearCache=1';
   iframe.sandbox = 'allow-scripts allow-same-origin'
-  //iframe.src = 'http://localhost:8085/oauth2/iframe#origin=http://localhost:3001&rpcToken=897783583.9057864';
   iframe.src = url;
   document.body.appendChild(iframe);
-  
 });
